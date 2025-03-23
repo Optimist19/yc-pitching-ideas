@@ -62,6 +62,9 @@ function PitchingPage() {
     backgroundPosition: "center"
   };
 
+  console.log("it worked and went back")
+
+
   return (
     <div>
       <div>
