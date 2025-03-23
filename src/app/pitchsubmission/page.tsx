@@ -1,4 +1,7 @@
 "use client";
+import { useSession } from "next-auth/react";
+
+import { useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,45 +9,124 @@ import { BsFillSendFill } from "react-icons/bs";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import MDEditor from "@uiw/react-md-editor/nohighlight";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+// import { signIn } from "next-auth/react";
 
 interface Inputs {
+  // append(arg0: string, file: File): unknown;
   title: string;
   description: string;
   category: string;
-  demoLink: string;
-  markdown: string;
+  vidLink: string;
+  socialHandle: string;
+  author: string;
+  file: FileList;
+  thumbnail: FileList;
 }
 
 function PitchSubmission() {
   const [value, setValue] = useState("");
-  // const [errMarkdown, setErrMarkdown] = useState(false);
+  const [errMarkdown, setErrMarkdown] = useState(false);
+  const { status } = useSession();
+
+  const router = useRouter(); // Initialize the router
+
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm<Inputs>();
 
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/pitch");
+    }
+  }, [status, router]);
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const allInputs = { ...data, value };
-    const pitchInfo = await fetch("http://localhost:3000/api/users", {
-      method: "POST",
-      body: JSON.stringify(allInputs),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-
-    console.log(pitchInfo, "pitchInfo");
-
-    if(!value){
-      // setErrMarkdown(!errMarkdown)
+    if (!value) {
+      setErrMarkdown(true);
       return;
     }
-    // console.log(data);
-  };
 
-  console.log(value, "value");
+    try {
+      // For the file upload
+      const file = data.file[0];
+      const file1 = data.file[0];
+
+      const dataForm = new FormData();
+      dataForm.append("file", file);
+      dataForm.append("upload_preset", "first_time_using_cloudinary");
+      dataForm.append("cloud_name", "dsyq2mclc");
+
+      const dataForm1 = new FormData();
+      dataForm1.append("file", file1);
+      dataForm1.append("upload_preset", "first_time_using_cloudinary");
+      dataForm1.append("cloud_name", "dsyq2mclc");
+
+      // Upload both images concurrently
+      const [imgRes, imgRes1] = await Promise.all([
+        fetch("https://api.cloudinary.com/v1_1/dsyq2mclc/image/upload", {
+          method: "POST",
+          body: dataForm
+        }),
+        fetch("https://api.cloudinary.com/v1_1/dsyq2mclc/image/upload", {
+          method: "POST",
+          body: dataForm1
+        })
+      ]);
+
+      const [updloadedImgUrl, updloadedImgUrl1] = await Promise.all([
+        imgRes.json(),
+        imgRes1.json()
+      ]);
+
+      // Update state with the new image URLs
+      // setUserImage(updloadedImgUrl?.url);
+      // setThumbNail(updloadedImgUrl1?.url);
+
+      // Construct the results object after the state has been updated
+      const results = {
+        ...data,
+        markdownValue: value,
+        userAvatar: updloadedImgUrl?.url, // Use the direct URL from the response
+        thumbnail: updloadedImgUrl1?.url // Use the direct URL from the response
+      };
+
+      setErrMarkdown(false);
+
+      // Send the data to your API
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: results.title,
+          video_link: results.vidLink,
+          author: results.author,
+          thumbnail: results.thumbnail,
+          category: results.category,
+          pitch_author: results.markdownValue,
+          description: results.description,
+          author_image: results.userAvatar,
+          social_handle: results.socialHandle
+        })
+      });
+
+      if (res.ok) {
+        router.push("/pitch");
+      } else {
+        console.error("Error saving user");
+      }
+    } catch (error) {
+      console.error("Error uploading images or saving user:", error);
+    }
+  };
 
   const bgColor = {
     minHeight: "30px",
@@ -53,6 +135,8 @@ function PitchSubmission() {
     backgroundSize: "cover",
     backgroundPosition: "center"
   };
+
+
 
   return (
     <div>
@@ -71,6 +155,26 @@ function PitchSubmission() {
           onSubmit={handleSubmit(onSubmit)}
           className="w-[770px] px-[2vw] flex flex-col  gap-[4vh] py-[7vh]">
           <div className="flex flex-col gap-2">
+            <label className="" htmlFor="author">
+              AUTHOR
+            </label>
+            <Input
+              className="ring-2 ring-black rounded-full"
+              id="title"
+              placeholder="JSM Academy Masterclasss"
+              {...register("author", {
+                required: {
+                  value: true,
+                  message: "Author of the pitch is required"
+                }
+              })}
+            />
+            <p className="px-3 text-red-800 text-[10px]">
+              {errors.author?.message}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
             <label className="" htmlFor="title">
               TITLE
             </label>
@@ -81,12 +185,50 @@ function PitchSubmission() {
               {...register("title", {
                 required: {
                   value: true,
-                  message: "Title of your pitch is required"
+                  message: "Title of the pitch is required"
                 }
               })}
             />
             <p className="px-3 text-red-800 text-[10px]">
               {errors.title?.message}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2 py-7">
+            <label className="">
+              <Input
+                type="file"
+                {...register("file", {
+                  required: {
+                    value: true,
+                    message: "Author's image of the pitch is required"
+                  }
+                })}
+                className="ring-2 ring-black rounded-full"
+              />
+            </label>
+            <p className="px-3 text-red-800 text-[10px]">
+              {errors.file?.message}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="" htmlFor="social">
+              SOCIAL MEDIA
+            </label>
+            <Input
+              className="ring-2 ring-black rounded-full"
+              id="social"
+              placeholder="JSM Academy Masterclasss"
+              {...register("socialHandle", {
+                required: {
+                  value: true,
+                  message: "Social handle is required"
+                }
+              })}
+            />
+            <p className="px-3 text-red-800 text-[10px]">
+              {errors.socialHandle?.message}
             </p>
           </div>
           <div className="flex flex-col gap-2">
@@ -126,13 +268,32 @@ function PitchSubmission() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="imag/vid">IMAGE/VIDEO LINK</label>
+            <label htmlFor="thumbnail">Thumbnail</label>
+            <Input
+              className="ring-2 ring-black rounded-full"
+              type="file"
+              id="thumbnail"
+              placeholder="Paste a link to your demo or promotional media"
+              {...register("thumbnail", {
+                required: {
+                  value: true,
+                  message: "Pitch cover is required"
+                }
+              })}
+            />
+            <p className="px-3 text-red-800 text-[10px]">
+              {errors.thumbnail?.message}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="vidLink">Video Link</label>
             <Input
               className="ring-2 ring-black rounded-full"
               type="text"
-              id="imag/vid"
+              id="vidLink"
               placeholder="Paste a link to your demo or promotional media"
-              {...register("demoLink", {
+              {...register("vidLink", {
                 required: {
                   value: true,
                   message: "Demo link to  your pitch is required"
@@ -140,7 +301,7 @@ function PitchSubmission() {
               })}
             />
             <p className="px-3 text-red-800 text-[10px]">
-              {errors.demoLink?.message}
+              {errors.vidLink?.message}
             </p>
           </div>
 
@@ -151,7 +312,9 @@ function PitchSubmission() {
               height={300}
               value={value}
               className="ring-2 ring-black rounded-full"
-              onChange={setValue}
+              // onChange={setValue}
+              onChange={(value) => setValue(value || "")}
+
               // {...register("markdown", {
               //   required: {
               //     value: true,
@@ -159,14 +322,17 @@ function PitchSubmission() {
               //   }
               // })}
             />
-            {/* {errMarkdown && <p></p>} */}
-            <p className="px-3 text-red-800 text-[10px]">
-              {errors.markdown?.message}
-            </p>
+            {errMarkdown && (
+              <p className="px-3 text-red-800 text-[10px]">
+                Your pitch statement is required
+              </p>
+            )}
           </div>
 
           <div className="bg-[#EE2B69] text-white flex items-center justify-center gap-2 rounded-full py-2 ring-2 ring-black">
-            <button type="submit">SUBMIT YOUR PITCH</button>
+            <button type="submit">
+              {isSubmitting ? "Submitting..." : "SUBMIT YOUR PITCH"}
+            </button>
             <BsFillSendFill />
           </div>
         </form>

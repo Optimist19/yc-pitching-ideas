@@ -1,12 +1,9 @@
 import Image from "next/image";
 import logo from "../../public/logo.svg";
-// import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-// import { auth } from "../../auth";
-// import { redirect } from "next/navigation";
 import SignInAndOut from "./SignInAndOut";
-import Link from "next/link";
-
-// import { signIn, auth } from "../../../auth";
+import CreateCompNav from "./CreateCompNav";
+import HomeNavComp from "./HomeNavComp";
+import MobileNav from "./MobileNav";
 
 async function NavBar() {
   return (
@@ -16,13 +13,24 @@ async function NavBar() {
           <Image src={logo} width={500} height={500} alt="application-logo" />
         </div>
 
-        <ul className="flex items-center justify-between gap-5 font-semibold text-[20px]">
-          <Link href="/pitchsubmission">
-          <li>Create</li>
-          
-          </Link>
-          <SignInAndOut />
-        </ul>
+        <div className="hidden md:block">
+          <ul className="flex items-center justify-between gap-5 font-semibold text-[20px] ">
+            <li>
+              <HomeNavComp />
+            </li>
+
+            <li>
+              <CreateCompNav />
+            </li>
+            <li>
+              <SignInAndOut />
+            </li>
+          </ul>
+        </div>
+
+        <div className=" font-semibold text-[20px] md:hidden">
+          <MobileNav />
+        </div>
       </header>
     </nav>
   );

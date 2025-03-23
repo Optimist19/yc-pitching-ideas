@@ -1,36 +1,93 @@
-// import db from '@/lib/db';
-import { db } from '@/db/statements';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 
-export async function GET() {
+export async function POST(req: NextRequest) {
   try {
-    const data = db.prepare('SELECT * FROM users').all();
-    return NextResponse.json(data);
+    const body = await req.json();
+    // console.log("Received Data:", body); // Log incoming data
+
+    const {
+      title,
+      author,
+      video_link,
+      category,
+      pitch_author,
+      description,
+      author_image,
+      social_handle,
+      thumbnail
+    } = body;
+
+    const user = await prisma.users.create({
+      data: {
+        title,
+        author,
+        video_link,
+        category,
+        pitch_author,
+        description,
+        author_image,
+        social_handle,
+        thumbnail
+      }
+    });
+
+    return NextResponse.json(user);
   } catch (error) {
+    console.log("Database Error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch data', details: error.message },
+      { error: `Error saving user: ${error}` },
       { status: 500 }
     );
   }
 }
 
-export async function POST(request: Request) {
-  try {
-    const { title, description, category, link, pitch } = await request.json();
 
-    const sql = `
-      INSERT INTO users (title, description, category, link, pitch)
-      VALUES (?, ?, ?, ?, ?);
-    `;
+// export async function PUT(req: NextRequest) {
+//   try {
+//     const body = await req.json();
+//     console.log("Received Data:", body); // Log incoming data
 
-    db.prepare(sql).run(title, description, category, link, pitch);
-    return NextResponse.json({ message: 'Data inserted successfully.' });
-  } catch (error) {
-	console.log(error, "error")
-    return NextResponse.json(
-      { error: 'Failed to insert data', details: error },
-      { status: 500 }
-    );
-  }
+//     const {
+//       views,
+//       id
+//     } = body;
+
+//     // const user = await prisma.users.update({
+//     //   where: {
+//     //     // Assuming you have an `id` field to identify the user
+//     //     id: body.id
+//     //   },
+//     //   data: {
+//     //     views
+//     //   }
+//     // });
+//     const updateView = await prisma.users.update({
+//       where: { id: id },
+//       data: {
+//         views: views + 1,
+//       },
+//     })
+
+//     return NextResponse.json(updateView);
+//   } catch (error) {
+//     console.log("Database Error:", error);
+//     return NextResponse.json(
+//       { error: `Error saving user: ${error}` },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+
+export async function GET() {
+  // For example, fetch data from your DB here
+  const users = await prisma.users.findMany();
+
+  return new Response(JSON.stringify(users), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' }
+  });
 }
