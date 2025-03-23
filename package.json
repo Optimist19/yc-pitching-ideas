@@ -2,12 +2,10 @@
   "name": "pitching-idea",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+"scripts": {
+  "build": "prisma generate && next build",
+  "postinstall": "prisma generate"
+},
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
