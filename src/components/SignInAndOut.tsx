@@ -38,7 +38,7 @@ async function SignInAndOut() {
 
               await signIn("google");
             }}>
-            <button type="submit">Signin with Google</button>
+            <button type="submit">Sign In</button>
           </form>
         </div>
       )}

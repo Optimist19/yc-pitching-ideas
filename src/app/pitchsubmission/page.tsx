@@ -4,7 +4,7 @@ import PitchSubmissionComp from "@/components/PitchSubmissionComp";
 function PitchSubmission() {
   return (
     <div>
-      <AuthProvider>
+      <AuthProvider session={undefined}>
         <PitchSubmissionComp />
       </AuthProvider>
     </div>

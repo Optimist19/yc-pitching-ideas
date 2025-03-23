@@ -6,10 +6,12 @@ import { Session } from "next-auth";
 
 export default function AuthProvider({
   children,
-  session,
+  session
 }: {
   children: ReactNode;
-  session: Session;
+  session: Session | undefined;
 }) {
+
+
   return <SessionProvider session={session}>{children}</SessionProvider>;
 }
