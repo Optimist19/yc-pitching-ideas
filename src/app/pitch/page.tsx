@@ -1,29 +1,66 @@
-import React from "react";
-import { CiSearch } from "react-icons/ci";
-import { FaEye } from "react-icons/fa";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
+
+"use client";
+
+import CardComp from "@/components/CardComp";
 import { Button } from "@/components/ui/button";
-// import { data } from "@/data";
-import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { CiSearch } from "react-icons/ci";
+import { useEffect, useState } from "react";
+import { CardCompPropsTypes } from "@/types";
+import SearchFormReset from "@/components/SearchFormReset";
+import SkeletonComp from "@/components/SkeletonComp";
 
-async function PitchingPage() {
-  try {
-    const response = await fetch("http://localhost:3000/api/users");
-    if (!response.ok) {
-      throw new Error("Failed to fetch data");
+function PitchingPage() {
+  const [pitch, setPitch] = useState<CardCompPropsTypes[]>([]);
+  const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState<CardCompPropsTypes[]>([]);
+
+  // const query = (await searchParams).query;
+  // const params = { search: query || null };
+
+  // console.log(params, "params");
+
+  // const users = await prisma.users.findMany();
+
+  useEffect(() => {
+    async function getPitch() {
+      setIsLoading(true);
+      const pitchData = await fetch("/api/users");
+      // const pitchData = 1;
+      const pitchResponse = await pitchData.json();
+      setPitch(pitchResponse);
+      setIsLoading(false);
+
     }
-    const data = await response.json();
-    console.log(data, "data");
-  } catch (err) {
-    console.log(err);
+    getPitch();
+  }, []);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearch(e.target.value);
   }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const filteredData = pitch.filter((data) => {
+      return data?.category.toLowerCase().includes(search.toLowerCase());
+    });
+
+    setFilteredData(filteredData);
+
+    // console.log(search, "results");
+    // console.log(filteredData, "filteredData");
+  };
+
+  // console.log(pitch, "pitch");
 
   const bgColor = {
     minHeight: "530px",
     width: "100%",
-    backgroundImage: "url('/stripe-line.svg')", // Use direct public path
+    backgroundImage: "url('/stripe-line.svg')",
     backgroundSize: "cover",
     backgroundPosition: "center"
   };
@@ -37,17 +74,19 @@ async function PitchingPage() {
           <div className="bg-[#FBE843] font-bold text-[17px] px-[2vw] py-[1vw] rounded-md">
             <h1 className="">PITCH, VOTE, AND GROW</h1>
           </div>
-          <div className="font-black text-[30px] text-center md:text-[54px] bg-[#000000] text-white px-[2vw] py-[1vw]">
+          <div className="font-black text-[25px] text-center md:text-[54px] bg-[#000000] text-white px-[2vw] py-[1vw]">
             <h2>Pitch Your Startup, Connect with Entrepreneurs</h2>
           </div>
 
-          <p className="text-white font-medium text-[20px]">
+          <p className="text-white font-medium md:text-[20px] text-[15px] text-center">
             Submit Ideas, Vote on Pitches, and Get Noticed in Virtual
             Competitions
           </p>
-          <div className="">
+          <form onSubmit={handleSubmit} className="search-form">
             <div className=" ring-4 ring-black rounded-full flex items-center md:w-[50vw] bg-white px-[2vw] md:py-2">
               <Input
+                name="search"
+                type="text"
                 style={{
                   border: "none",
                   outline: "none",
@@ -55,79 +94,40 @@ async function PitchingPage() {
                   backgroundColor: "transparent"
                 }}
                 placeholder="SEARCH STARTUP"
-                className="w-[100%] font-bold md:text-[24px]"
+                className="w-[100%] font-bold md:text-[24px] text-[18px]"
+                onChange={handleChange}
               />
-              <div className="w-[35px] h-[35px] rounded-full bg-black flex items-center justify-center cursor-pointer">
+              {search ? <SearchFormReset /> : ""}
+              <Button
+                type="submit"
+                className="w-[35px] h-[35px] rounded-full bg-black flex items-center justify-center cursor-pointer">
                 <CiSearch className=" text-[1.5vw] text-white" />
-              </div>
+              </Button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
 
       <main>
-        <div className="py-7">
-          <h3 className="font-semibold text-[30px] pb-[5vh] px-[2vw] ">
-            Recommended startups
-          </h3>
-          <div className="flex flex-wrap justify-center gap-4">
-            {/* {data?.map((obj, i) => {
-              return (
-                <div
-                  key={i}
-                  className="w-[320px] h-[471px] ring-2 ring-black flex flex-col gap-3 py-[4vh] px-4 shadow-custom rounded-2xl hover:bg-[#FFE8F0]">
-                  <div className="flex justify-between items-center font-medium text-[16px]">
-                    <div className="bg-[#FFE8F0] rounded-full px-2 py-2">
-                      <p>{obj.date}</p>
-                    </div>
+        {isLoading ? (
+          <SkeletonComp />
+        ) : (
+          <div className="py-7 px-">
+            <h3 className="font-semibold text-[22px] md:text-[30px] pb-[5vh] px-[2vw] ">
+              {search ? `Searching for ${search}` : "Recommended startups"}
+            </h3>
 
-                    <div className="flex justify-between gap-2 items-center">
-                      <FaEye className="text-red-400" />
-                      <p>{obj.views}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <div className="grid gap-1">
-                      <p className="font-medium text-[16px]">{obj.name}</p>
-                      <p className="font-semibold text-[26px]">EcoTrack</p>
-                    </div>
-                    <div className="w-[3vw]">
-                      <Image
-                        src="/image.svg"
-                        width={500}
-                        height={500}
-                        alt="writter-picture"
-                      />
-                    </div>
-                  </div>
-
-                  <p className="text-[16px] font-thin">{obj.desc}</p>
-
-                  <div className="">
-                    <Image
-                      src="./topic thumbnail.svg"
-                      width={276}
-                      height={164}
-                      alt="writter-picture"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between font-medium text-[16px]">
-                      <p>{obj.level}</p>
-                      <Link href={`/pitch/${i}`}>
-                        <Button className="hover:bg-[#FFE8F0] bg-black rounded-full px-7">
-                          Details
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })} */}
+            {search ? (
+              <CardComp
+                filteredData={filteredData}
+                pitch={[]}
+                similarPost={[]}
+              />
+            ) : (
+              <CardComp pitch={pitch} similarPost={[]} filteredData={[]} />
+            )}
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
