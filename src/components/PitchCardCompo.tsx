@@ -34,17 +34,16 @@ function PitchCardCompo({ pitch }: { pitch: CardCompPropsTypes[] }) {
           <div className="flex justify-between">
             <div className="grid gap-1">
               <p className="font-medium text-[16px]">{obj.author}</p>
-              <p className="font-semibold text-[22px] md:text-[26px]">
+              <p className="font-semibold text-[20px] lg:text-[26px]">
                 {obj.title}
               </p>
             </div>
-            <div className="w-[3vw]">
+            <div className="w-[]">
               <Image
                 src={obj.author_image}
                 width={50}
                 height={50}
                 alt="creator-picture"
-                className="rounded-full"
                 style={{ width: "50px", height: "50px", borderRadius: "50%" }}
               />
             </div>

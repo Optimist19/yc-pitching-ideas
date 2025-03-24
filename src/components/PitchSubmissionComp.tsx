@@ -47,11 +47,8 @@ function PitchSubmissionComp() {
     }
   }, [status, router]);
 
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
+ 
 
-  console.log("it worked")
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (!value) {

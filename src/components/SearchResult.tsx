@@ -10,7 +10,7 @@ import { SimilarPostTypes } from '@/types'
 function SearchResult({filteredData} : { filteredData : SimilarPostTypes[] }) {
   // const { filteredData } = props
   return (
-  <div  className="flex flex-wrap gap-4 py-3">
+  <div  className="flex flex-wrap gap-4 py-3 justify-center">
       {filteredData?.map((obj) => (
         <div
           key={obj.id}
@@ -35,16 +35,15 @@ function SearchResult({filteredData} : { filteredData : SimilarPostTypes[] }) {
           <div className="flex justify-between">
             <div className="grid gap-1">
               <p className="font-medium text-[16px]">{obj.author}</p>
-              <p className="font-semibold text-[26px]">{obj.title}</p>
+              <p className="font-semibold text-[20px] lg:text-[26px]">{obj.title}</p>
             </div>
-            <div className="w-[3vw]">
+            <div className="">
               <Image
                 src={obj.author_image}
                 width={500}
                 height={500}
                 alt="creator-picture"
-                className="rounded-full"
-              />
+                style={{ width: "50px", height: "50px", borderRadius: "50%" }}              />
             </div>
           </div>
 

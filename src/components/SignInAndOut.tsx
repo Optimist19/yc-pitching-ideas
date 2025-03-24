@@ -10,15 +10,15 @@ async function SignInAndOut() {
   const user = userSession?.user;
   // console.log(user, "user in the signin");
 
-  const fullName = user?.name || "";
-  const initials = fullName.split(" ").map(word => word[0]).join("");
+  // const fullName = user?.name || "";
+  // const initials = fullName.split(" ").map(word => word[0]).join("");
   // console.log(initials); 
 
   return (
     <div>
       {user ? (
         <div className="flex gap-5 items-center">
-          <span>{initials}</span>
+          {/* <span>{initials}</span> */}
           <div>
             <Image src={user.image} alt="user-photo" width={20} height={20} className="rounded-full"/>
           </div>

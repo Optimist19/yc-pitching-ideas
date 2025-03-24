@@ -113,7 +113,7 @@ function PitchingPage() {
           <SkeletonComp />
         ) : (
           <div className="py-7 px-">
-            <h3 className="font-semibold text-[22px] md:text-[30px] pb-[5vh] px-[2vw] ">
+            <h3 className="font-semibold text-[20px] lg:text-[26px] pb-[5vh] px-[2vw] ">
               {search ? `Searching for ${search}` : "Recommended startups"}
             </h3>
 

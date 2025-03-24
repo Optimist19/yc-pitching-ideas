@@ -38,13 +38,12 @@ function SimilarPostComp(props) {
                 {obj.title}
               </p>
             </div>
-            <div className="w-[3vw]">
+            <div className="">
               <Image
                 src={obj.author_image}
                 width={50}
                 height={50}
                 alt="creator-picture"
-                className="rounded-full"
                 style={{ width: "50px", height: "50px", borderRadius: "50%" }}
               />
             </div>
