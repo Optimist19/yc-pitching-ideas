@@ -105,27 +105,27 @@ function PitchingPage() {
       </div>
 
       <main>
-        {pitch.length < 1 ? (
-          <p className="text-center pt-4vh text-[18px] md:text-[28px] lg:text-[34px] font-bold">No data</p>
-        ) : isLoading ? (
-          <SkeletonComp />
-        ) : (
-          <div className="py-7 px-">
-            <h3 className="font-semibold text-[20px] lg:text-[26px] pb-[5vh] px-[2vw]">
-              {search ? `Searching for ${search}` : "Recommended startups"}
-            </h3>
-            {search ? (
-              <CardComp
-                filteredData={filteredData}
-                pitch={[]}
-                similarPost={[]}
-              />
-            ) : (
-              <CardComp pitch={pitch} similarPost={[]} filteredData={[]} />
-            )}
-          </div>
-        )}
-      </main>
+  {isLoading ? (
+    <SkeletonComp />
+  ) : pitch.length < 1 ? (
+    <p className="text-center pt-4vh text-[18px] md:text-[28px] lg:text-[34px] font-bold">No data</p>
+  ) : (
+    <div className="py-7 px-">
+      <h3 className="font-semibold text-[20px] lg:text-[26px] pb-[5vh] px-[2vw]">
+        {search ? `Searching for ${search}` : "Recommended startups"}
+      </h3>
+      {search ? (
+        <CardComp
+          filteredData={filteredData}
+          pitch={[]}
+          similarPost={[]}
+        />
+      ) : (
+        <CardComp pitch={pitch} similarPost={[]} filteredData={[]} />
+      )}
+    </div>
+  )}
+</main>
     </div>
   );
 }
