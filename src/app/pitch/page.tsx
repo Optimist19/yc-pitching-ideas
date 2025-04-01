@@ -30,7 +30,6 @@ function PitchingPage() {
       const pitchResponse = await pitchData.json();
       setPitch(pitchResponse);
       setIsLoading(false);
-
     }
     getPitch();
   }, []);
@@ -61,9 +60,6 @@ function PitchingPage() {
     backgroundSize: "cover",
     backgroundPosition: "center"
   };
-
-  console.log("it worked and went back")
-
 
   return (
     <div>
@@ -109,14 +105,15 @@ function PitchingPage() {
       </div>
 
       <main>
-        {isLoading ? (
+        {pitch.length < 1 ? (
+          <p className="text-center pt-4vh text-[18px] md:text-[28px] lg:text-[34px] font-bold">No data</p>
+        ) : isLoading ? (
           <SkeletonComp />
         ) : (
           <div className="py-7 px-">
-            <h3 className="font-semibold text-[20px] lg:text-[26px] pb-[5vh] px-[2vw] ">
+            <h3 className="font-semibold text-[20px] lg:text-[26px] pb-[5vh] px-[2vw]">
               {search ? `Searching for ${search}` : "Recommended startups"}
             </h3>
-
             {search ? (
               <CardComp
                 filteredData={filteredData}

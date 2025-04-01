@@ -166,7 +166,13 @@ async function DetailPage({ params }: { params: Promise<{ id: string }> }) {
                     Similar startups
                   </p>
 
-                  <SimilarPostComp similarPost={similarPost} />
+                  {similarPost.length === 0 ? (
+                    <p className="text-center pt-4vh text-[18px] md:text-[28px] lg:text-[34px] font-bold">
+                      No similar startups
+                    </p>
+                  ) : (
+                    <SimilarPostComp similarPost={similarPost} />
+                  )}
                 </div>
               </div>
             </div>

@@ -32,7 +32,7 @@ function PitchSubmissionComp() {
   const [errMarkdown, setErrMarkdown] = useState(false);
   const { status } = useSession();
 
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
 
   const {
     register,
@@ -41,13 +41,16 @@ function PitchSubmissionComp() {
   } = useForm<Inputs>();
 
 
+ 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/pitch");
     }
   }, [status, router]);
 
- 
+  if (status !== "authenticated") {
+    return <div className='p-6'>Redirecting...</div>;
+  }
 
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -215,7 +218,7 @@ function PitchSubmissionComp() {
 
           <div className="flex flex-col gap-2">
             <label className="" htmlFor="social">
-              SOCIAL MEDIA
+              SOCIAL MEDIA/ WEBSITE
             </label>
             <Input
               className="ring-2 ring-black rounded-full"

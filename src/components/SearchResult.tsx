@@ -14,7 +14,7 @@ function SearchResult({filteredData} : { filteredData : SimilarPostTypes[] }) {
       {filteredData?.map((obj) => (
         <div
           key={obj.id}
-          className="w-[320px] h-[471px] ring-2 ring-black flex flex-col gap-3 py-[4vh] px-4 shadow-custom rounded-2xl hover:bg-[#FFE8F0]"
+          className="w-[320px] h-[471px] ring-2 ring-black flex flex-col gap-3 py-[4vh] px-4 shadow-custom rounded-2xl hover:bg-[#FFE8F0]  cursor-pointer"
         >
           <div className="flex justify-between items-center font-medium text-[16px]">
             <div className="bg-[#FFE8F0] rounded-full px-2 py-2">
@@ -35,7 +35,9 @@ function SearchResult({filteredData} : { filteredData : SimilarPostTypes[] }) {
           <div className="flex justify-between">
             <div className="grid gap-1">
               <p className="font-medium text-[16px]">{obj.author}</p>
-              <p className="font-semibold text-[20px] lg:text-[26px]">{obj.title}</p>
+              <p className="font-semibold text-[20px] lg:text-[26px]"> {obj.title.length < 30
+                      ? obj.title
+                      : obj.title.slice(0, 30) + "..."}</p>
             </div>
             <div className="">
               <Image
@@ -47,7 +49,9 @@ function SearchResult({filteredData} : { filteredData : SimilarPostTypes[] }) {
             </div>
           </div>
 
-          <p className="text-[16px] font-thin">{obj.description}</p>
+          <p className="text-[16px] font-thin"> {obj.description.length < 30
+                      ? obj.description
+                      : obj.description.slice(0, 30) + "..."}</p>
 
           <div className="relative w-full h-[65vh]">
             <Image

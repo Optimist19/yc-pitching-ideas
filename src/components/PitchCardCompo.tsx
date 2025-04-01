@@ -1,4 +1,7 @@
-// import { CardCompPropsTypes, UsersType } from '@/types';
+"use client";
+
+
+import { motion } from "framer-motion";
 import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
@@ -7,14 +10,19 @@ import { FaEye } from "react-icons/fa";
 import { CardCompPropsTypes } from "@/types";
 
 function PitchCardCompo({ pitch }: { pitch: CardCompPropsTypes[] }) {
-  // console.log(pitch, "PitchCardCompo");
 
   return (
     <div className="flex flex-wrap justify-center gap-4">
       {pitch?.map((obj) => (
-        <div
+          <motion.div
           key={obj.id}
-          className="w-[320px] h-[471px] ring-2 ring-black flex flex-col gap-3 py-[4vh] px-4 shadow-custom rounded-2xl hover:bg-[#FFE8F0]">
+          initial={{ y: 0 }}
+          whileHover={{ y: -10 }} // Moves up when hovered
+          transition={{ type: "spring", stiffness: 200 }}
+         
+        >
+        <div
+          className="w-[320px] h-[471px] ring-2 ring-black flex flex-col gap-3 py-[4vh] px-4 shadow-custom rounded-2xl hover:bg-[#FFE8F0] cursor-pointer">
           <div className="flex justify-between items-center font-medium text-[16px]">
             <div className="bg-[#FFE8F0] rounded-full px-2 py-2">
               {new Date(obj.createdAt)
@@ -35,7 +43,9 @@ function PitchCardCompo({ pitch }: { pitch: CardCompPropsTypes[] }) {
             <div className="grid gap-1">
               <p className="font-medium text-[16px]">{obj.author}</p>
               <p className="font-semibold text-[20px] lg:text-[26px]">
-                {obj.title}
+              {obj.title.length < 10
+                      ? obj.title
+                      : obj.title.slice(0, 10) + "..."}
               </p>
             </div>
             <div className="w-[]">
@@ -49,7 +59,11 @@ function PitchCardCompo({ pitch }: { pitch: CardCompPropsTypes[] }) {
             </div>
           </div>
 
-          <p className="text-[16px] font-thin">{obj.description}</p>
+          <p className="text-[16px] font-thin">
+          {obj.description.length < 30
+                      ? obj.description
+                      : obj.description.slice(0, 30) + "..."}
+          </p>
 
           <div className="relative w-full h-[65vh]">
             <Image
@@ -72,6 +86,8 @@ function PitchCardCompo({ pitch }: { pitch: CardCompPropsTypes[] }) {
             </div>
           </div>
         </div>
+        </motion.div>
+
       ))}
     </div>
   );
