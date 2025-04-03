@@ -155,8 +155,7 @@ function PitchSubmissionComp() {
             <Input
               className="ring-2 ring-black rounded-full"
               id="title"
-              placeholder="JSM Academy Masterclasss"
-              {...register("author", {
+              placeholder="author"  {...register("author", {
                 required: {
                   value: true,
                   message: "Author of the pitch is required"
@@ -175,7 +174,7 @@ function PitchSubmissionComp() {
             <Input
               className="ring-2 ring-black rounded-full"
               id="title"
-              placeholder="JSM Academy Masterclasss"
+              placeholder="title"
               {...register("title", {
                 required: {
                   value: true,
@@ -213,7 +212,7 @@ function PitchSubmissionComp() {
             <Input
               className="ring-2 ring-black rounded-full"
               id="social"
-              placeholder="JSM Academy Masterclasss"
+              placeholder="social media"
               {...register("socialHandle", {
                 required: {
                   value: true,
@@ -230,7 +229,7 @@ function PitchSubmissionComp() {
             <Textarea
               className="ring-2 ring-black rounded-md"
               id="desc"
-              placeholder="Description here."
+              placeholder="description"
               {...register("description", {
                 required: {
                   value: true,

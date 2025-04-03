@@ -59,8 +59,8 @@ function PitchingPage() {
   }, []);
 
   const handleCancelClick = () => {
-    setSearch(""); // Clear the search input
     setFilteredData([]); // Clear filtered data
+    setSearch(""); // Clear the search input
   };
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -101,24 +101,26 @@ function PitchingPage() {
             Competitions
           </p>
           
+          
             <div className=" ring-4 ring-black rounded-full flex items-center md:w-[50vw] bg-white px-[2vw] md:py-2">
-              <Input
-                name="search"
-                type="text"
-                style={{
-                  border: "none",
-                  outline: "none",
-                  boxShadow: "none",
-                  backgroundColor: "transparent"
-                }}
-                placeholder="SEARCH STARTUP"
-                className="w-[100%] font-bold md:text-[24px] text-[18px]"
-                onChange={handleChange}
-              />
+            <Input
+  name="search"
+  type="text"
+  style={{
+    border: "none",
+    outline: "none",
+    boxShadow: "none",
+    backgroundColor: "transparent"
+  }}
+  placeholder="SEARCH STARTUP"
+  className="w-[100%] font-bold md:text-[24px] text-[18px]"
+  onChange={handleChange}
+  value={search} // Add this line to connect input to search state
+/>
               {search && (
                 <div onClick={handleCancelClick} className="focus:outline-none">
-                  <SearchFormReset />
-                </div>
+                <SearchFormReset onReset={handleCancelClick} /> {/* Pass the handler to component */}
+              </div>
               )}
             </div>
         
