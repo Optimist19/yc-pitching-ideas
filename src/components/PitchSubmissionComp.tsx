@@ -1,9 +1,7 @@
-
 "use client";
 import { useSession } from "next-auth/react";
 
 import { useRouter } from "next/navigation";
-
 
 import { BsFillSendFill } from "react-icons/bs";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -40,8 +38,6 @@ function PitchSubmissionComp() {
     formState: { errors, isSubmitting }
   } = useForm<Inputs>();
 
-
- 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/pitch");
@@ -49,9 +45,8 @@ function PitchSubmissionComp() {
   }, [status, router]);
 
   if (status !== "authenticated") {
-    return <div className='p-6'>Redirecting...</div>;
+    return <div className="p-6">Redirecting...</div>
   }
-
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (!value) {
@@ -62,12 +57,14 @@ function PitchSubmissionComp() {
     try {
       // For the file upload
       const file = data.file[0];
-      const file1 = data.file[0];
+      const file1 = data.thumbnail[0];
 
       const dataForm = new FormData();
       dataForm.append("file", file);
       dataForm.append("upload_preset", "first_time_using_cloudinary");
       dataForm.append("cloud_name", "dsyq2mclc");
+      // console.log("Selected File 1 (Avatar):", data.file[0].name);
+      // console.log("Selected File 2 (Thumbnail):", data.thumbnail[0].name);
 
       const dataForm1 = new FormData();
       dataForm1.append("file", file1);
@@ -91,16 +88,11 @@ function PitchSubmissionComp() {
         imgRes1.json()
       ]);
 
-      // Update state with the new image URLs
-      // setUserImage(updloadedImgUrl?.url);
-      // setThumbNail(updloadedImgUrl1?.url);
-
-      // Construct the results object after the state has been updated
       const results = {
         ...data,
         markdownValue: value,
-        userAvatar: updloadedImgUrl?.url, // Use the direct URL from the response
-        thumbnail: updloadedImgUrl1?.url // Use the direct URL from the response
+        userAvatar: updloadedImgUrl?.url,
+        thumbnail: updloadedImgUrl1?.url
       };
 
       setErrMarkdown(false);
@@ -139,8 +131,6 @@ function PitchSubmissionComp() {
     backgroundSize: "cover",
     backgroundPosition: "center"
   };
-
-
 
   return (
     <div>
@@ -240,7 +230,7 @@ function PitchSubmissionComp() {
             <Textarea
               className="ring-2 ring-black rounded-md"
               id="desc"
-              placeholder="Type your message here."
+              placeholder="Description here."
               {...register("description", {
                 required: {
                   value: true,
@@ -272,7 +262,7 @@ function PitchSubmissionComp() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="thumbnail">Thumbnail</label>
+            <label htmlFor="thumbnail">Company Logo</label>
             <Input
               className="ring-2 ring-black rounded-full"
               type="file"
@@ -291,7 +281,7 @@ function PitchSubmissionComp() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="vidLink">Video Link</label>
+            <label htmlFor="vidLink">Youtube Embedded Link</label>
             <Input
               className="ring-2 ring-black rounded-full"
               type="text"

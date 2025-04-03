@@ -27,8 +27,26 @@ export interface CardCompPropsTypes {
   thumbnail: string;
 }
 
+export interface Post {
+  title: string;
+  description: string;
+  category: string;
+  author: string;
+  thumbnail: string;
+  id: string;
+  video_link: string;
+  pitch_author: string;
+  author_image: string;
+  social_handle: string;
+  views: number | null;
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+
 
 export interface SimilarPostTypes {
+  slice(arg0: number): unknown;
   title: string;
   description: string;
   category: string;

@@ -1,11 +1,12 @@
 import Image from "next/image";
 
-import SimilarPostComp from "@/components/SimilarPostComp";
 import { UsersType } from "@/types";
 import { redirect } from "next/navigation";
 import { auth } from "../../../../auth";
 import prisma from "../../../../lib/prisma";
 import type { Metadata } from "next";
+import SimilarPostComp from "@/components/SimilarPostComp";
+import Video from "@/components/Video";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -33,6 +34,7 @@ async function DetailPage({ params }: { params: Promise<{ id: string }> }) {
   const userSession = (await auth()) as UsersType;
   if (!userSession) {
     redirect("/pitch");
+    
   }
 
   const { id } = await params;
@@ -52,9 +54,23 @@ async function DetailPage({ params }: { params: Promise<{ id: string }> }) {
   // }
 
   //Filtering similar posts that have the same category as the current post
-  const similarPost = await prisma.users.findMany({
+  const similarPost = (await prisma.users.findMany({
     where: { category: user?.category }
-  });
+  })).map(post => ({
+    title: post.title,
+    description: post.description,
+    category: post.category,
+    author: post.author,
+    video_link: post.video_link,
+    views: post.views,
+    id: post.id,
+    thumbnail: post.thumbnail,
+    createdAt: post.createdAt,
+    updatedAt: post.updatedAt,
+    author_image: post.author_image,
+    social_handle: post.social_handle,
+    pitch_author: post.pitch_author
+  }));
 
   const bgColor = {
     minHeight: "530px",
@@ -158,6 +174,7 @@ async function DetailPage({ params }: { params: Promise<{ id: string }> }) {
 
                   <p className="text-justify">{user?.pitch_author}</p>
                 </div>
+                <Video url={user?.video_link}/>
 
                 <div className="ring-1 ring-black my-[3vh]" />
 

@@ -14,7 +14,7 @@ function SearchResult({filteredData} : { filteredData : SimilarPostTypes[] }) {
       {filteredData?.map((obj) => (
         <div
           key={obj.id}
-          className="w-[320px] h-[471px] ring-2 ring-black flex flex-col gap-3 py-[4vh] px-4 shadow-custom rounded-2xl hover:bg-[#FFE8F0]  cursor-pointer"
+          className="w-[320px] h-[471px] ring-2 ring-black flex flex-col gap-3 py-[4vh] px-4  rounded-2xl hover:bg-[#FFE8F0]  cursor-pointer"
         >
           <div className="flex justify-between items-center font-medium text-[16px]">
             <div className="bg-[#FFE8F0] rounded-full px-2 py-2">

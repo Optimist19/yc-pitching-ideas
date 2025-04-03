@@ -1,13 +1,12 @@
 "use client";
 
 import CardComp from "@/components/CardComp";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CiSearch } from "react-icons/ci";
 import { useEffect, useState } from "react";
-import { CardCompPropsTypes } from "@/types";
+import { CardCompPropsTypes, SimilarPostTypes } from "@/types";
 import SearchFormReset from "@/components/SearchFormReset";
 import SkeletonComp from "@/components/SkeletonComp";
+import { Bounce, toast } from "react-toastify";
 
 function PitchingPage() {
   const [pitch, setPitch] = useState<CardCompPropsTypes[]>([]);
@@ -15,43 +14,66 @@ function PitchingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [filteredData, setFilteredData] = useState<CardCompPropsTypes[]>([]);
 
-  // const query = (await searchParams).query;
-  // const params = { search: query || null };
-
-  // console.log(params, "params");
-
-  // const users = await prisma.users.findMany();
-
   useEffect(() => {
     async function getPitch() {
       setIsLoading(true);
-      const pitchData = await fetch("/api/users");
-      // const pitchData = 1;
-      const pitchResponse = await pitchData.json();
-      setPitch(pitchResponse);
-      setIsLoading(false);
+
+      try {
+        const response = await fetch("/api/users");
+
+        if (!response.ok) {
+          toast(`${response.statusText}`, {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce
+          });
+        }
+
+        const data = await response.json();
+        setPitch(data);
+      } catch (error) {
+        console.error("Fetch error:", error);
+        toast("Something went wrong! Please try again", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
+
     getPitch();
   }, []);
 
+  const handleCancelClick = () => {
+    setSearch(""); // Clear the search input
+    setFilteredData([]); // Clear filtered data
+  };
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setSearch(e.target.value);
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
     const filteredData = pitch.filter((data) => {
       return data?.category.toLowerCase().includes(search.toLowerCase());
     });
 
     setFilteredData(filteredData);
+  }
 
-    // console.log(search, "results");
-    // console.log(filteredData, "filteredData");
-  };
 
-  // console.log(pitch, "pitch");
+
 
   const bgColor = {
     minHeight: "530px",
@@ -78,7 +100,7 @@ function PitchingPage() {
             Submit Ideas, Vote on Pitches, and Get Noticed in Virtual
             Competitions
           </p>
-          <form onSubmit={handleSubmit} className="search-form">
+          
             <div className=" ring-4 ring-black rounded-full flex items-center md:w-[50vw] bg-white px-[2vw] md:py-2">
               <Input
                 name="search"
@@ -93,39 +115,40 @@ function PitchingPage() {
                 className="w-[100%] font-bold md:text-[24px] text-[18px]"
                 onChange={handleChange}
               />
-              {search ? <SearchFormReset /> : ""}
-              <Button
-                type="submit"
-                className="w-[35px] h-[35px] rounded-full bg-black flex items-center justify-center cursor-pointer">
-                <CiSearch className=" text-[1.5vw] text-white" />
-              </Button>
+              {search && (
+                <div onClick={handleCancelClick} className="focus:outline-none">
+                  <SearchFormReset />
+                </div>
+              )}
             </div>
-          </form>
+        
         </div>
       </div>
 
       <main>
-  {isLoading ? (
-    <SkeletonComp />
-  ) : pitch.length < 1 ? (
-    <p className="text-center pt-4vh text-[18px] md:text-[28px] lg:text-[34px] font-bold">No data</p>
-  ) : (
-    <div className="py-7 px-">
-      <h3 className="font-semibold text-[20px] lg:text-[26px] pb-[5vh] px-[2vw]">
-        {search ? `Searching for ${search}` : "Recommended startups"}
-      </h3>
-      {search ? (
-        <CardComp
-          filteredData={filteredData}
-          pitch={[]}
-          similarPost={[]}
-        />
-      ) : (
-        <CardComp pitch={pitch} similarPost={[]} filteredData={[]} />
-      )}
-    </div>
-  )}
-</main>
+        {isLoading ? (
+          <SkeletonComp />
+        ) : pitch.length < 1 ? (
+          <p className="text-center pt-4vh text-[18px] md:text-[28px] lg:text-[34px] font-bold">
+            No data
+          </p>
+        ) : (
+          <div className="py-7 px-">
+            <h3 className="font-semibold text-[20px] lg:text-[26px] pb-[5vh] text-center sm:text-left  sm:pl-2">
+              {search ? `Searching for ${search}` : "Recommended startups"}
+            </h3>
+            {search ? (
+              <CardComp
+                filteredData={filteredData as unknown as SimilarPostTypes[]}
+                pitch={[]}
+                similarPost={[]}
+              />
+            ) : (
+              <CardComp pitch={pitch} similarPost={[]} filteredData={[]} />
+            )}
+          </div>
+        )}
+      </main>
     </div>
   );
 }
