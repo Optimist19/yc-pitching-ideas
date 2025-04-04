@@ -127,7 +127,7 @@ async function DetailPage({ params }: { params: Promise<{ id: string }> }) {
               <div className="w-[800px]">
                 <div className="md:flex md:justify-between">
                   <div className="flex items-center py-1 gap-3">
-                    <div className="w-[3vw]">
+                    <div className="w-[]">
                       <Image
                         src={user?.author_image || "/image.svg"}
                         width={50}
